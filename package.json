@@ -1,0 +1,19 @@
+{
+  "name": "git-lazy",
+  "version": "1.0.0",
+  "description": "split from https://github.com/bluelovers/git_env/tree/master/msysgit/local/bin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bluelovers/git-lazy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bluelovers/git-lazy/issues"
+  },
+  "homepage": "https://github.com/bluelovers/git-lazy#readme"
+}
