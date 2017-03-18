@@ -4,7 +4,7 @@
   "description": "split from https://github.com/bluelovers/git_env/tree/master/msysgit/local/bin",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha */*.test.js"
   },
   "repository": {
     "type": "git",
