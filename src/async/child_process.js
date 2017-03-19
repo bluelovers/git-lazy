@@ -9,41 +9,12 @@ const child_process = require('child_process');
 
 const cp = {
 
-	/*
-	async execAsync(command, options)
-	{
-		return new Promise((resolve, reject) =>
-		{
-			const child = child_process.exec(cmd, opts, (err, stdout, stderr) =>
-			{
-				err ? reject({
-					error: err,
-					stdout: stdout,
-					stderr: stderr
-				}
-				) : resolve({
-					error: err,
-					stdout: stdout,
-					stderr: stderr
-				}
-				);
-			}
-			)
-		}
-		).catch(function (err)
-		{
-			return {
-				error: err
-			};
-		}
-		);
-	},
-	*/
-
 	//execAsync: _promisify(child_process.exec),
 	//execFileAsync: _promisify(child_process.exec),
 
 	_promisify: _promisify,
+
+	exec2spawn: require('../util/exec2spawn').exec2spawn,
 
 };
 
@@ -54,34 +25,34 @@ function _promisify(fn)
 	return (...argv) =>
 	{
 		return new Promise((resolve, reject) =>
-		{
-			const cb = (err, stdout, stderr) =>
 			{
-				err ? reject({
-					error: err,
-					stdout: stdout,
-					stderr: stderr
-				}
-				) : resolve({
-					error: err,
-					stdout: stdout,
-					stderr: stderr
-				}
-				);
-			};
+				const cb = (err, stdout, stderr) =>
+				{
+					err ? reject({
+								error: err,
+								stdout: stdout,
+								stderr: stderr
+							}
+						) : resolve({
+								error: err,
+								stdout: stdout,
+								stderr: stderr
+							}
+						);
+				};
 
-			argv.push(cb);
+				argv.push(cb);
 
-			const child = fn(...argv)
-		}
+				const child = fn(...argv)
+			}
 		)
 		.catch((err) =>
-		{
-			//console.error(err.error);
-			return err;
-		}
+			{
+				//console.error(err.error);
+				return err;
+			}
 		)
-		;
+			;
 	};
 }
 

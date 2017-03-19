@@ -10,24 +10,24 @@ function stringify(arr)
 	let regexp_space = /[\s\uFEFF\xA0]+/u;
 
 	return arr.reduce(function (a, b)
-	{
-		if (regexp_space.test(b))
 		{
-			let c = '"';
-			if (/(?!\\)["]/u.test(b))
+			if (regexp_space.test(b))
 			{
-				c = "'";
+				let c = '"';
+				if (/(?!\\)["]/u.test(b))
+				{
+					c = "'";
+				}
+				b = c + b + c;
 			}
-			b = c + b + c;
-		}
 
-		if (a != '')
-		{
-			b = ' ' + b;
-		}
+			if (a != '')
+			{
+				b = ' ' + b;
+			}
 
-		return a + b;
-	}, ''
+			return a + b;
+		}, ''
 	)
 }
 
@@ -75,8 +75,8 @@ function parse(input, options = {
 						_c.s = input.substr(_c.lastIndex, m.index - _c.lastIndex);
 
 						if (options.node_argv && _c.lastIndex_string
-						&& (regexp.lastIndex - m.index) == 1
-						&& (_c.lastIndex - _c.lastIndex_string) == 1
+							&& (regexp.lastIndex - m.index) == 1
+							&& (_c.lastIndex - _c.lastIndex_string) == 1
 						)
 						{
 							arr[arr.length - 1] += _c.s;
