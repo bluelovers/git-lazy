@@ -15,5 +15,16 @@
   "bugs": {
     "url": "https://github.com/bluelovers/git-lazy/issues"
   },
-  "homepage": "https://github.com/bluelovers/git-lazy#readme"
+  "homepage": "https://github.com/bluelovers/git-lazy#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
+    "upath2": "*"
+  },
+  "optionalDependencies": {
+    "iconv": "*",
+    "bluebird": "*"
+  }
 }
