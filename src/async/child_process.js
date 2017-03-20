@@ -51,8 +51,7 @@ function _promisify(fn)
 				//console.error(err.error);
 				return err;
 			}
-		)
-			;
+		);
 	};
 }
 

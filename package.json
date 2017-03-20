@@ -4,8 +4,7 @@
   "description": "split from https://github.com/bluelovers/git_env/tree/master/msysgit/local/bin",
   "main": "index.js",
   "bin": {
-    "node-git-lazy-ci-sh": "bin/node-git-lazy-ci-sh",
-    "node-git-lazy-ci-test": "bin/node-git-lazy-ci-test"
+    "git-rename": "bin/git-rename.js"
   },
   "scripts": {
     "test": "mocha */*.test.js"
