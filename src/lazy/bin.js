@@ -7,15 +7,43 @@
 const child_process = require('../async/child_process');
 const fs = require('../async/fs');
 const path = require('upath2');
+const lazyutil = require('../util');
 
 const self = module.exports = Object.assign(require("."), {
 
-		async notepad(filename)
+		async notepad(filename, options = {})
 		{
-			let options = {
-				throw_error: true,
-				git_commit: true,
-			};
+			options = Object.assign({
+					throw_error: true,
+					git_commit: true,
+
+					//format_columns: true,
+
+					write_file: true,
+
+					cb_output: null,
+
+				}, options
+			);
+
+			if (typeof filename != "string" || filename == '')
+			{
+				throw new TypeError('fatal: undefined filename.');
+			}
+
+			options.format_columns = lazyutil.iifv(options.format_columns, filename.indexOf('COMMIT_EDITMSG') != -1)
+
+			if (options.format_columns == true)
+			{
+				options.format_columns = await self.exec(`git config format.commitmessagecolumns`, {
+						allow_empty: true,
+					}
+				);
+			}
+			else if (typeof options.format_columns != "number")
+			{
+				options.format_columns = false;
+			}
 
 			filename = path.normalize(filename);
 			let _filename = self.fix_path(filename);
@@ -42,15 +70,36 @@ const self = module.exports = Object.assign(require("."), {
 							return Promise.reject(`fatal: input empty`);
 						}
 
-						return fs.writeFileAsync(_filename, input).then(() =>
-							{
-								return {
-									file: filename,
-									_file: _filename,
-									data: input,
+						if (options.format_columns > 1)
+						{
+							const word_wrap = require('word-wrap');
+							input = word_wrap(input, {
+									width: options.format_columns,
+									indent: '',
 								}
+							);
+						}
+
+						if (typeof options.cb_output == "function")
+						{
+							input = options.cb_output(input);
+						}
+
+						let cb = () =>
+						{
+							return {
+								file: filename,
+								_file: _filename,
+								data: input,
 							}
-						);
+						};
+
+						if (!options.write_file)
+						{
+							return cb();
+						}
+
+						return fs.writeFileAsync(_filename, input).then(cb);
 					}
 				)
 				.catch((err) =>
@@ -71,8 +120,9 @@ const self = module.exports = Object.assign(require("."), {
 								err.message += `\n\treal:\t${_real}`;
 							}
 						}
-						catch(e)
-						{}
+						catch (e)
+						{
+						}
 
 						//console.error(err);
 						throw err;

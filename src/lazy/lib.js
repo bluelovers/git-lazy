@@ -14,15 +14,27 @@ const self = module.exports = Object.assign(require("."), {
 		{
 			options = Object.assign({
 					throw_error: false,
+					allow_empty: false,
 				}, options
 			);
 
-			const data = await child_process.execAsync(cmd, options);
+			const data = await child_process.execAsync(cmd, options)
+				.then((data) =>
+					{
+						if ((options.throw_error && data.error) || (!options.allow_empty && !data.stdout) && (data.error || data.stderr))
+						{
+							throw (data.stderr ? new Error(data.stderr) : data.error);
+						}
 
-			if ((options.throw_error && data.error) || !data.stdout && (data.error || data.stderr))
-			{
-				throw (data.stderr ? new Error(data.stderr) : data.error);
-			}
+						return data;
+					}
+				)
+				.catch((err) =>
+					{
+						throw err;
+					}
+				)
+				;
 
 			//return data.stdout.replace(/\r\n|\r/g, LF).trim(LF);
 			return self.stdout_trim(data.stdout);
