@@ -73,9 +73,23 @@ const self = module.exports = Object.assign(require("."), {
 		return ret;
 	},
 
-	stdout_trim(stdout)
+	stdout_trim(stdout, options = {})
 	{
-		return stdout.replace(/\r\n|\r/g, LF).replace(/^[\s\n]*\n+|[\n\s]+$/g, '');
+		let output = stdout.toString().replace(/\r\n|\r/g, LF);
+
+		if (options.git_commit)
+		{
+			output = output.replace(/^\s*#[^\n]*$/mg, '');
+
+			options.reduce_lf = true;
+		}
+
+		if (options.reduce_lf)
+		{
+			output = output.replace(/\n{3,}/g, "\n\n");
+		}
+
+		return output.replace(/^[\s\n]*\n+|[\n\s]+$/g, '');
 	},
 
 	str_unwrap(s, c = '"')
