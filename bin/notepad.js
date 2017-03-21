@@ -16,7 +16,7 @@ let output = gitlazy.notepad(cli.input[0])
 .catch((err) =>
 	{
 		console.error(`${err}`);
-		process.exit(1);
+		process.exit(err.code || 1);
 		//throw err;
 	}
 );
