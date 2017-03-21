@@ -24,16 +24,18 @@ function _promisify(fn)
 {
 	return (...argv) =>
 	{
+		let options = {};
+
+		if (argv.length > 1 && typeof argv[argv.length - 1] == "object")
+		{
+			options = argv[argv.length - 1];
+		}
+
 		return new Promise((resolve, reject) =>
 			{
 				const cb = (err, stdout, stderr) =>
 				{
-					err ? reject({
-								error: err,
-								stdout: stdout,
-								stderr: stderr
-							}
-						) : resolve({
+					(options.throw_error && err) ? reject(err) : resolve({
 								error: err,
 								stdout: stdout,
 								stderr: stderr
@@ -48,6 +50,12 @@ function _promisify(fn)
 		)
 		.catch((err) =>
 			{
+				if (1 || options.throw_error && err)
+				{
+					//console.error(err);
+					throw err;
+				}
+
 				//console.error(err.error);
 				return err;
 			}
