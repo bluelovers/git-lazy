@@ -35,8 +35,10 @@ Usage: git-rename [<options>] <source>... <destination>
 
 if (1 && cli.input.length != 2)
 {
-	//console.error(cli.help);
-	cli.showHelp();
+	console.error(`fatal: bad argv, ${process.argv.slice(2)}`);
+
+	console.error(cli.help);
+	//cli.showHelp(1);
 
 	process.exit(1);
 }
@@ -87,7 +89,7 @@ else
 		.catch((err) =>
 			{
 				console.error(err);
-				process.exit(1);
+				process.exit(err.code || 1);
 			}
 		)
 		;
@@ -95,6 +97,6 @@ else
 	catch (err)
 	{
 		console.error(err);
-		process.exit(1);
+		process.exit(err.code || 1);
 	}
 }
