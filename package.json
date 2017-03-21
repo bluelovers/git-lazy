@@ -4,7 +4,8 @@
   "description": "split from https://github.com/bluelovers/git_env/tree/master/msysgit/local/bin",
   "main": "index.js",
   "bin": {
-    "git-rename": "bin/git-rename.js"
+    "git-lazy-rename": "bin/git-rename.js",
+    "git-lazy-notepad.js": "bin/notepad.js"
   },
   "scripts": {
     "test": "mocha */*.test.js"
