@@ -56,11 +56,15 @@ const self = module.exports = Object.assign(require("."), {
 		{
 			name = self._paths[name];
 		}
-		
-		name = name.replace(/^~\//, ospath.home() + '/');
 
-//		return name;
-		return path.normalize(name);
+		return self.fix_path(name);
+	},
+
+	fix_path(s)
+	{
+		s = s.replace(/^~\//, ospath.home() + '/');
+
+		return path.normalize(s);
 	},
 
 });
