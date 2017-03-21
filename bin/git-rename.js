@@ -37,6 +37,8 @@ if (1 && cli.input.length != 2)
 {
 	//console.error(cli.help);
 	cli.showHelp();
+
+	process.exit(1);
 }
 else
 {
@@ -85,6 +87,7 @@ else
 		.catch((err) =>
 			{
 				console.error(err);
+				process.exit(1);
 			}
 		)
 		;
@@ -92,5 +95,6 @@ else
 	catch (err)
 	{
 		console.error(err);
+		process.exit(1);
 	}
 }
