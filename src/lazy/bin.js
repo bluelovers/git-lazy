@@ -23,6 +23,8 @@ const self = module.exports = Object.assign(require("."), {
 
 					cb_output: null,
 
+					editor: 'notepad.exe',
+
 				}, options
 			);
 
@@ -53,7 +55,7 @@ const self = module.exports = Object.assign(require("."), {
 			let data = await fs.openAsync(_filename, 'w')
 				.then(() =>
 					{
-						return child_process.execFileAsync(`notepad.exe`, [_filename], options);
+						return child_process.execFileAsync(options.editor, [_filename], options);
 					}
 				)
 				.then(() =>
