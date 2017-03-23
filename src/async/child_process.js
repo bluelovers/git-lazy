@@ -5,7 +5,7 @@
 'use strict';
 
 const child_process = require('child_process');
-//const Promise = require("bluebird");
+const Promise = require("bluebird");
 
 const cp = {
 

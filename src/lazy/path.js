@@ -16,7 +16,19 @@ const self = module.exports = Object.assign(require("."), {
 
 	async repo_dir_git()
 	{
-		let stdout = await self.exec("git rev-parse --git-dir");
+		let stdout = await self.exec("git rev-parse --git-dir", {
+			throw_error: false,
+		});
+		stdout = path.normalize(stdout);
+
+		return stdout;
+	},
+
+	async repo_dir_root()
+	{
+		let stdout = await self.exec("git rev-parse --show-toplevel", {
+			throw_error: false,
+		});
 		stdout = path.normalize(stdout);
 
 		return stdout;

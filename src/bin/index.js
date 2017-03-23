@@ -12,4 +12,8 @@
 	_global_.gitlazy = gitlazy;
 	_global_.meow = meow;
 
+	_global_.chalk = require('chalk');
+
+	_global_.lazyConsole = require('../util/cli/console').Console.create();
+
 })(global);
