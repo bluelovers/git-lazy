@@ -2,7 +2,7 @@
  * Created by user on 2017/3/22.
  */
 
-const ansiStyles = require('./ansi-styles');
+const ansiStyles = require('ansi-styles');
 const escapeStringRegexp = require('escape-string-regexp');
 //const chalk = require('chalk');
 const supportsColor = require('supports-color');
@@ -92,6 +92,19 @@ class lazyConsole extends console.Console {
 
 		builder._styles = _styles;
 		builder.enabled = this.enabled;
+
+		/*
+		builder._open = function ()
+		{
+			//
+		};
+
+		builder._close = function ()
+		{
+			//
+		};
+		*/
+
 		//builder._ = this._;
 		// __proto__ is used because we must return a function, but there is
 		// no way to create a function with a different prototype.
