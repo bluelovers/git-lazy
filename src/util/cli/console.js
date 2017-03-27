@@ -94,17 +94,31 @@ class lazyConsole extends console.Console
 		builder._styles = _styles;
 		builder.enabled = this.enabled;
 
-		/*
 		builder._open = function ()
 		{
-			//
+			let ret = '';
+
+			for (let i of this._styles)
+			{
+				let code = ansiStyles[i];
+				ret += code.open;
+			}
+
+			return ret;
 		};
 
 		builder._close = function ()
 		{
-			//
+			let ret = '';
+
+			for (let i of this._styles)
+			{
+				let code = ansiStyles[i];
+				ret = code.close + ret;
+			}
+
+			return ret;
 		};
-		*/
 
 		//builder._ = this._;
 		// __proto__ is used because we must return a function, but there is
