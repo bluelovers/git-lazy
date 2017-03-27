@@ -9,7 +9,8 @@ const supportsColor = require('supports-color');
 
 const isSimpleWindowsTerm = process.platform === 'win32' && !/^xterm/i.test(process.env.TERM);
 
-class lazyConsole extends console.Console {
+class lazyConsole extends console.Console
+{
 
 	constructor(stdout = process.stdout, stderr = process.stderr, options = {})
 	{
@@ -142,15 +143,15 @@ class lazyConsole extends console.Console {
 		let nestedStyles = this._styles;
 		let i = 0;
 
-		let originalDim = module.exports.styles.dim.open;
+		let originalDim = ansiStyles.dim.open;
 		if (isSimpleWindowsTerm && (nestedStyles.indexOf('gray') !== -1 || nestedStyles.indexOf('grey') !== -1))
 		{
-			module.exports.styles.dim.open = '';
+			ansiStyles.dim.open = '';
 		}
 
 		for (i = 0; i < nestedStyles.length; i++)
 		{
-			let code = module.exports.styles[nestedStyles[i]];
+			let code = ansiStyles[nestedStyles[i]];
 
 			//console.dir(code.open);
 
@@ -165,12 +166,12 @@ class lazyConsole extends console.Console {
 
 		for (i; i >= 0; i--)
 		{
-			let code = module.exports.styles[nestedStyles[i]];
+			let code = ansiStyles[nestedStyles[i]];
 
 			this._self._stdout.write(code.close);
 		}
 
-		module.exports.styles.dim.open = originalDim;
+		ansiStyles.dim.open = originalDim;
 
 		return ret;
 	}
