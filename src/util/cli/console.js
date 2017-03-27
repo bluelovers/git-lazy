@@ -140,6 +140,11 @@ class lazyConsole extends console.Console
 			return this._self[method](...argv);
 		}
 
+		let _cache_ = {
+			open: '',
+			close: '',
+		};
+
 		let nestedStyles = this._styles;
 		let i = 0;
 
@@ -155,13 +160,19 @@ class lazyConsole extends console.Console
 
 			//console.dir(code.open);
 
-			this._self._stdout.write(code.open);
+			//this._self._stdout.write(code.open);
+
+			_cache_.open += code.open;
+			_cache_.close = code.close + _cache_.close;
 		}
 
 		//console.log(this._self, method, this._self[method]);
 
+		this._self._stdout.write(_cache_.open);
 		let ret = this._self[method](...argv);
+		this._self._stdout.write(_cache_.close);
 
+		/*
 		i--;
 
 		for (i; i >= 0; i--)
@@ -170,6 +181,7 @@ class lazyConsole extends console.Console
 
 			this._self._stdout.write(code.close);
 		}
+		*/
 
 		ansiStyles.dim.open = originalDim;
 
