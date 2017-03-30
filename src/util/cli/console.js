@@ -9,16 +9,33 @@ const supportsColor = require('supports-color');
 
 const isSimpleWindowsTerm = process.platform === 'win32' && !/^xterm/i.test(process.env.TERM);
 
+const methodPre = '__';
+
 class lazyConsole extends console.Console
 {
 
 	constructor(stdout = process.stdout, stderr = process.stderr, options = {})
 	{
-		super(stdout, stderr);
+		if (stdout && stdout.stdout && stdout.stderr)
+		{
+			options = stdout;
+		}
+		else
+		{
+			options = Object.assign({
+				stdout: stdout,
+				stderr: stderr,
+			}, options);
+		}
 
-		this.enabled = !options || options.enabled === undefined ? supportsColor : options.enabled;
+		super(options.stdout, options.stderr);
 
-		//this._colors = this._colors;
+		options._self = this;
+		options.enabled = !options || options.enabled === undefined ? supportsColor : options.enabled;
+
+		options._proto = this.__proto__;
+
+		this[keySymbol] = options;
 	}
 
 	static create(...argv)
@@ -27,6 +44,8 @@ class lazyConsole extends console.Console
 	}
 
 }
+
+const keySymbol = Symbol.for(lazyConsole);
 
 {
 	const defineProps = Object.defineProperties;
@@ -64,8 +83,8 @@ class lazyConsole extends console.Console
 		{
 			if (typeof console[method] == "function" && !methods_skip.includes(method))
 			{
-				lazyConsole.prototype['__' + method] = lazyConsole.prototype[method];
-				proto['__' + method] = lazyConsole.prototype['__' + method];
+				lazyConsole.prototype[methodPre + method] = lazyConsole.prototype[method];
+				proto[methodPre + method] = lazyConsole.prototype[methodPre + method];
 
 				a.push(method);
 			}
@@ -79,20 +98,22 @@ class lazyConsole extends console.Console
 	{
 		var builder = function (...argv)
 		{
-			return applyStyle.call(builder, '__' + 'log', argv);
+			return applyStyle.call(builder, methodPre + 'log', argv);
 		};
 
 		//this.log(888, arguments.callee.caller.caller, _styles);
 
 		let self = this;
 
-		builder._self = self;
+		builder[keySymbol] = self[keySymbol];
 
-		builder._stdout = self._stdout;
-		builder._stderr = self._stderr;
+		//builder._self = self;
+
+		//builder._stdout = self._stdout;
+		//builder._stderr = self._stderr;
 
 		builder._styles = _styles;
-		builder.enabled = this.enabled;
+		//builder.enabled = this.enabled;
 
 		builder._open = function ()
 		{
@@ -133,7 +154,7 @@ class lazyConsole extends console.Console
 				{
 					//console.log(888, arguments.callee.caller.caller, _styles);
 
-					return applyStyle.call(builder, '__' + method, argv);
+					return applyStyle.call(builder, methodPre + method, argv);
 				};
 
 				//builder[method].__proto__ = proto;
@@ -147,11 +168,9 @@ class lazyConsole extends console.Console
 
 	function applyStyle(method, argv)
 	{
-		if (!this.enabled || !argv.length)
+		if (!this[keySymbol].enabled || !argv.length)
 		{
-			//console.log(this._self, method, this._self[method], this._self.__info, this.__info);
-
-			return this._self[method](...argv);
+			return this[keySymbol]._self[method](...argv);
 		}
 
 		let _cache_ = {
@@ -159,43 +178,23 @@ class lazyConsole extends console.Console
 			close: '',
 		};
 
-		let nestedStyles = this._styles;
-		let i = 0;
-
 		let originalDim = ansiStyles.dim.open;
-		if (isSimpleWindowsTerm && (nestedStyles.indexOf('gray') !== -1 || nestedStyles.indexOf('grey') !== -1))
+		if (isSimpleWindowsTerm && (this._styles.indexOf('gray') !== -1 || this._styles.indexOf('grey') !== -1))
 		{
 			ansiStyles.dim.open = '';
 		}
 
-		for (i = 0; i < nestedStyles.length; i++)
+		for (let i of this._styles)
 		{
-			let code = ansiStyles[nestedStyles[i]];
-
-			//console.dir(code.open);
-
-			//this._self._stdout.write(code.open);
+			let code = ansiStyles[i];
 
 			_cache_.open += code.open;
 			_cache_.close = code.close + _cache_.close;
 		}
 
-		//console.log(this._self, method, this._self[method]);
-
-		this._self._stdout.write(_cache_.open);
-		let ret = this._self[method](...argv);
-		this._self._stdout.write(_cache_.close);
-
-		/*
-		i--;
-
-		for (i; i >= 0; i--)
-		{
-			let code = ansiStyles[nestedStyles[i]];
-
-			this._self._stdout.write(code.close);
-		}
-		*/
+		this[keySymbol].stdout.write(_cache_.open);
+		let ret = this[keySymbol]._self[method](...argv);
+		this[keySymbol].stdout.write(_cache_.close);
 
 		ansiStyles.dim.open = originalDim;
 
@@ -249,12 +248,12 @@ class lazyConsole extends console.Console
 		{
 			lazyConsole.prototype[method] = function (...argv)
 			{
-				if (this.enabled && this._colors[method])
+				if (this[keySymbol].enabled && this._colors[method])
 				{
 					return this[this._colors[method]].apply(this, argv);
 				}
 
-				return this[method].apply(this, argv);
+				return this[methodPre + method].apply(this, argv);
 			};
 		}
 	);
@@ -271,4 +270,4 @@ module.exports.Console = lazyConsole;
 module.exports.isSimpleWindowsTerm = isSimpleWindowsTerm;
 //module.exports.chalk = chalk;
 module.exports.supportsColor = supportsColor;
-
+module.exports.keySymbol = keySymbol;
