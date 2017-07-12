@@ -77,7 +77,12 @@ const keySymbol = Symbol.for(lazyConsole);
 
 	let proto = defineProps(lazyConsole, styles);
 
-	let methods_skip = ['constructor', 'Console', 'time', 'timeEnd',];
+	let methods_skip = [
+		'constructor',
+		'Console',
+		'time',
+		//'timeEnd',
+	];
 
 	let methods = Object.keys(console).reduce((a, method) =>
 		{
