@@ -10,6 +10,13 @@ const path = require('upath2');
 
 const self = module.exports = Object.assign(require("."), {
 
+		git_branch_current_name()
+		{
+			return self.exec("git rev-parse --abbrev-ref HEAD", {
+				throw_error: true,
+			});
+		},
+
 		async git_branch_new_empty(branch_name, options = {})
 		{
 			options = Object.assign({
